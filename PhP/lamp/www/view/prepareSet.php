@@ -33,7 +33,7 @@ ob_start();
                         <br>
                     <?php endfor; ?>
                     <input type="submit" class="btn btn-primary btn-sm" value="Enregistrer"/>
-                    <input type=checkbox name="final"> Finales
+                   
                 </form>
             <?php endif; ?>
         </td>
@@ -62,7 +62,7 @@ ob_start();
                         <br>
                     <?php endfor; ?>
                     <input type="submit" class="btn btn-primary btn-sm" value="Enregistrer"/>
-                    <input type=checkbox name="final"> Finales
+                    
                 </form>
             <?php endif; ?>
         </td>
@@ -75,4 +75,4 @@ ob_start();
 $content = ob_get_clean();
 require_once 'gabarit.php';
 ?>
-
+<? 

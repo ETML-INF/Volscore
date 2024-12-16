@@ -57,6 +57,9 @@ switch ($action)
     case 'unittests':
         executeUnitTests();
         break;
+    case 'teamDetail':
+        teamDetail($_GET['teamid']);
+        break;
     default:
         require_once 'view/home.php';
 }

@@ -10,7 +10,7 @@ ob_start();
 <?php
 foreach ($teams as $team)
 {
-    echo "<li>".$team->name."</li>";
+    echo "<li><a href='?action=teamDetail&teamid=". $team->id . "'>".$team->name."</a></li>";
 }
 ?>
 </ul>
