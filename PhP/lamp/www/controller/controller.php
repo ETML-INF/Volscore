@@ -136,13 +136,13 @@ function prepareSet($setid)
     require_once 'view/prepareSet.php';
 }
 
-function setPositions ($gameid, $setid, $teamid, $pos1, $pos2, $pos3, $pos4, $pos5, $pos6, $final) 
+function setPositions ($gameid, $setid, $teamid, $pos1, $pos2, $pos3, $pos4, $pos5, $pos6) 
 {
     $positions = VolscoreDB::getPositions($setid,$teamid); // check if we already have them
     if (count($positions) == 0) {
-        VolscoreDB::setPositions($setid, $teamid, $pos1, $pos2, $pos3, $pos4, $pos5, $pos6, $final);
+        VolscoreDB::setPositions($setid, $teamid, $pos1, $pos2, $pos3, $pos4, $pos5, $pos6, 1);
     } else {
-        VolscoreDB::updatePositions($setid, $teamid, $pos1, $pos2, $pos3, $pos4, $pos5, $pos6, $final);
+        VolscoreDB::updatePositions($setid, $teamid, $pos1, $pos2, $pos3, $pos4, $pos5, $pos6, 1);
     }
     header('Location: ?action=prepareSet&id='.$setid);
 }
@@ -217,6 +217,15 @@ function scorePoint($setid,$receiving)
     }
 }
 
+function removePoint($setid)
+{
+    $set = VolscoreDb::getSet($setid);
+    VolscoreDB::removeLastPoint($set);
+    
+    // Rediriger l'utilisateur vers la page de gestion du score
+    header('Location: ?action=keepScore&setid='.$setid);
+}
+
 function validateTeamForGame($teamid,$gameid)
 {
     foreach(VolscoreDB::getRoster($gameid,$teamid) as $member) {
@@ -228,5 +237,30 @@ function validateTeamForGame($teamid,$gameid)
 function executeUnitTests() 
 {
     require 'unittests.php';
+}
+
+function teamDetail($teamid){
+    if(!isset($teamid)){
+        echo "non";
+    }
+    if ($teamid == null) {
+        $message = "Team ID is missing.";
+        require_once 'view/error.php';
+    } else {
+        // Get the team details
+        $team = VolscoreDB::getTeam($teamid);
+        $games = VolscoreDB::getGames();
+
+        if ($team == null) {
+            $message = "Team not found.";
+            require_once 'view/error.php';
+        } else {
+            // Get the list of players for the team
+            $players = VolscoreDB::getMembers($teamid);
+
+            // Pass the team and players data to the view
+            require_once 'view/teamDetail.php';
+        }
+    }
 }
 ?>

@@ -91,13 +91,13 @@ foreach ($pastgames as $game) {
         $statement->execute(); // Executer la query
         $poss = [];
         while ($row = $statement->fetch()) $poss[] = $row['id'];
-        VolscoreDB::setPositions($newset->id,$game->receivingTeamId,$poss[0],$poss[1],$poss[2],$poss[3],$poss[4],$poss[5],1);
+        VolscoreDB::setPositions($newset->id,$game->receivingTeamId,$poss[0],$poss[1],$poss[2],$poss[3],$poss[4],$poss[5]);
         $query = "SELECT players.id FROM players INNER JOIN members ON players.member_id = members.id WHERE game_id = ".$game->number." AND team_id = ".$game->visitingTeamId." ORDER BY RAND();";
         $statement = $dbh->prepare($query); // Prepare query
         $statement->execute(); // Executer la query
         $poss = [];
         while ($row = $statement->fetch()) $poss[] = $row['id'];
-        VolscoreDB::setPositions($newset->id,$game->visitingTeamId,$poss[0],$poss[1],$poss[2],$poss[3],$poss[4],$poss[5],1);
+        VolscoreDB::setPositions($newset->id,$game->visitingTeamId,$poss[0],$poss[1],$poss[2],$poss[3],$poss[4],$poss[5]);
         while (!VolscoreDB::setIsOver($newset)) {
             if (random_int(0, 1) == 0) {
                 VolscoreDB::addPoint($newset,true);

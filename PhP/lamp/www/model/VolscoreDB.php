@@ -6,7 +6,7 @@ class VolscoreDB implements IVolscoreDb {
     public static function connexionDB()
     {
         require '.credentials.php';
-        $PDO = new PDO("mysql:host=$hostname; port=$portnumber; dbname=$database;", $username, $password);
+        $PDO = new PDO("mysql:host=$hostname; dbname=$database;", $username, $password);
         $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $PDO->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         return $PDO;
@@ -66,11 +66,12 @@ class VolscoreDB implements IVolscoreDb {
             $dbh = self::connexionDB();
             $query = 
                 "SELECT games.id as number, type, level,category,league,receiving_id as receivingTeamId,r.name as receivingTeamName,visiting_id as visitingTeamId,v.name as visitingTeamName,location as place,venue,moment ".
-                "FROM games INNER JOIN teams r ON games.receiving_id = r.id INNER JOIN teams v ON games.visiting_id = v.id";
+                "FROM games INNER JOIN teams r ON games.receiving_id = r.id INNER JOIN teams v ON games.visiting_id = v.id ORDER BY moment DESC";
             $statement = $dbh->prepare($query); // Prepare query
             $statement->setFetchMode(PDO::FETCH_ASSOC);
             $statement->execute();
             $res = [];
+            
             while ($rec = $statement->fetch()) {
                 $game = new Game($rec);
                 $game->scoreReceiving = 0;
@@ -96,7 +97,7 @@ class VolscoreDB implements IVolscoreDb {
     public static function getGamesByTime($period) : array
     {
         $query = "SELECT games.id as number, type, level,category,league,receiving_id as receivingTeamId,r.name as receivingTeamName,visiting_id as visitingTeamId,v.name as visitingTeamName,location as place,venue,moment " .
-                 "FROM games INNER JOIN teams r ON games.receiving_id = r.id INNER JOIN teams v ON games.visiting_id = v.id ";
+                 "FROM games INNER JOIN teams r ON games.receiving_id = r.id INNER JOIN teams v ON games.visiting_id = v.id ORDER BY moment ASC";
     
         switch ($period) {
             case TimeInThe::Past:
@@ -199,7 +200,7 @@ class VolscoreDB implements IVolscoreDb {
             $query =
                 "SELECT games.id as number, type, level,category,league,receiving_id as receivingTeamId,r.name as receivingTeamName,visiting_id as visitingTeamId,v.name as visitingTeamName,location as place,venue,moment,toss " .
                 "FROM games INNER JOIN teams r ON games.receiving_id = r.id INNER JOIN teams v ON games.visiting_id = v.id " .
-                "WHERE games.id=$number";
+                "WHERE games.id=$number ORDER BY moment DESC";
             $statement = $dbh->prepare($query); // Prepare query
             $statement->execute(); // Executer la query
             if (!($queryResult = $statement->fetch())) throw new Exception("Game not found"); 
@@ -553,6 +554,18 @@ class VolscoreDB implements IVolscoreDb {
         self::executeInsertQuery($query);
     }
 
+    public static function removeLastPoint($set)
+    {
+        // Trouver le dernier point inscrit pour le set
+        $lastPoint = self::getLastPoint($set);
+        
+        if ($lastPoint) {
+            // Si un point existe, on le supprime
+            $query = "DELETE FROM points WHERE id = " . $lastPoint->id;
+            self::executeUpdateQuery($query);
+        }
+    }
+
     public static function addTimeOut($teamid, $setid)
     {
         $lastPoint = self::getLastPoint(self::getSet($setid));
@@ -660,7 +673,7 @@ class VolscoreDB implements IVolscoreDb {
         self::executeUpdateQuery($query);
     }
 
-    public static function getPositions($setid, $teamid, &$isFinal = NULL) : array
+     public static function getPositions($setid, $teamid, &$isFinal = NULL) : array
     {
         try
         {

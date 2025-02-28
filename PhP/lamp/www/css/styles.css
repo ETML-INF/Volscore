@@ -1,5 +1,21 @@
 header, footer {
     background: linear-gradient(0.25turn, #6aa619, #a7f89f, #1eb35c);
+
+}
+
+header{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 0px 20px; 
+    align-items: center;   
+}
+
+
+header form {
+    grid-column-start: 3;
+    justify-self: end;
+    margin-left: 20px;
+    font-size: larger;
 }
 
 td, th {
@@ -68,4 +84,16 @@ td, th {
 .teamPrep {
     width: 30%;
     text-align: center;
+}
+
+#removePoint{
+    display: flex;
+    justify-content: end;
+    padding-bottom: 5.5vh;
+}
+
+#btnRemovePoint{
+    color: white;
+    width: 25vh;
+    height: 4.5vh;
 }

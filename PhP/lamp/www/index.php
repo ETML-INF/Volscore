@@ -7,6 +7,23 @@ require_once 'model/VolscoreDB.php';
 require_once 'vendor/autoload.php';
 require_once 'helpers/helpers.php';
 
+session_start();
+
+if ($_POST["language"]){
+
+    switch ($_POST["language"]){
+        case 'it':
+            $_SESSION["languagePreference"] = "it";
+            break;
+        case 'fr':
+            $_SESSION["languagePreference"] = "fr";
+            break;
+        case 'de':
+            $_SESSION["languagePreference"] = "de";
+            break;
+    }
+}
+
 switch ($action)
 {
     case 'mark':
@@ -56,6 +73,12 @@ switch ($action)
         break;
     case 'unittests':
         executeUnitTests();
+        break;
+    case 'teamDetail':
+        teamDetail($_GET['teamid']);
+        break;
+    case 'removePoint':
+        removePoint($_POST['setid']);
         break;
     default:
         require_once 'view/home.php';

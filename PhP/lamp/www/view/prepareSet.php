@@ -3,6 +3,49 @@ $title = 'Préparation du match '.$game->number;
 
 ob_start();
 ?>
+<script>
+    // Fonction pour mettre à jour les options disponibles pour chaque sélection
+    function updateAvailablePlayers() {
+        // Récupérer toutes les sélections de joueurs (6 positions pour chaque équipe)
+        let posElements = document.querySelectorAll('[id^="pos"]');
+
+        // Créer un tableau pour suivre les joueurs déjà sélectionnés
+        let selectedPlayers = [];
+
+        // Récupérer les joueurs déjà sélectionnés et les ajouter au tableau
+        posElements.forEach(function(selectElement) {
+            let selectedPlayer = selectElement.value;
+            if (selectedPlayer) {
+                selectedPlayers.push(selectedPlayer);
+            }
+        });
+
+        // Mettre à jour les options dans chaque sélecteur de poste
+        posElements.forEach(function(selectElement) {
+            // Réinitialiser les options
+            let options = selectElement.querySelectorAll('option');
+            options.forEach(function(option) {
+                if (selectedPlayers.includes(option.value) && option.value != '') {
+                    option.disabled = true;  // Désactiver les options déjà sélectionnées
+                } else {
+                    option.disabled = false; // Réactiver les options non sélectionnées
+                }
+            });
+        });
+    }
+
+    // Appeler la fonction lors de chaque changement de sélection
+    document.addEventListener('DOMContentLoaded', function() {
+        let posElements = document.querySelectorAll('[id^="pos"]');
+        
+        posElements.forEach(function(selectElement) {
+            selectElement.addEventListener('change', updateAvailablePlayers);
+        });
+
+        // Initialiser les sélecteurs à leur état actuel
+        updateAvailablePlayers();
+    });
+</script>
 
 <h2>Préparation du set <?= $set->number ?> du match <?= $game->number ?>, <?= $game->receivingTeamName ?> - <?= $game->visitingTeamName ?></h2>
 <table>
@@ -33,7 +76,7 @@ ob_start();
                         <br>
                     <?php endfor; ?>
                     <input type="submit" class="btn btn-primary btn-sm" value="Enregistrer"/>
-                    <input type=checkbox name="final"> Finales
+                   
                 </form>
             <?php endif; ?>
         </td>
@@ -62,7 +105,7 @@ ob_start();
                         <br>
                     <?php endfor; ?>
                     <input type="submit" class="btn btn-primary btn-sm" value="Enregistrer"/>
-                    <input type=checkbox name="final"> Finales
+                    
                 </form>
             <?php endif; ?>
         </td>
@@ -75,4 +118,4 @@ ob_start();
 $content = ob_get_clean();
 require_once 'gabarit.php';
 ?>
-
+<? 

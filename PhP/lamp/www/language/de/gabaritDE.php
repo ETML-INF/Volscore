@@ -1,0 +1,3 @@
+<?php
+
+$langue = "Sprache";
